@@ -1,0 +1,157 @@
+Server 1
+ip=> 192.168.1.2 #Also DNS fo server
+Default Gateway=> 192.168.1.1
+Pool1:
+	ip=>192.168.4.1
+	dns=>192.168.4.10
+	startIP=>192.168.4.11
+
+Router 1
+FE0/0:Server
+			Ip=>192.168.1.1 255.255.255.0
+FE1/0:Switch
+			IP=>192.168.4.1 255.255.255.0
+
+Switch 2
+Vlan2:
+	=>vlan 2
+	=>name vlan2
+	=>exit
+
+Vlan3:
+	=>vlan 3
+	=>name vlan3
+	=>exit
+	
+Configuring Vtp:
+			=>enable
+			=>show vlan
+			=>show vtp status
+			=>configure terminal
+			=>vtp domain switch2
+			=>interface fa0/3
+			=>switchport mode trunk
+			=>vtp mode Server
+
+Switch 1
+Configuring Vtp:
+			=>enable
+			=>show vlan
+			=>show vtp status
+			=>configure terminal
+			=>vtp domain switch2
+			=>interface fa0/1
+			=>switchport mode trunk
+			=>vtp mode Client
+
+Vlan2:
+	=>interface fastEthernet 0/3
+	=>switchport mode access 
+	=>switchport access vlan2
+Vlan3:
+	=>interface fastEthernet 0/1
+	=>switchport mode access 
+	=>switchport access vlan3
+
+Router 1:
+	RIP 192.168.1.0
+	RIP 192.168.2.0
+	RIP 192.168.4.0
+
+
+Router 2
+S0/0:Server
+			Ip=>192.168.2.1 255.255.255.0
+S1/0:Switch
+			IP=>192.168.3.1 255.255.255.0
+FE0/0:Server
+			Ip=>192.168.5.1 255.255.255.0
+
+Server 2
+ip=> 192.168.5.2 #Also DNS fo server
+Default Gateway=> 192.168.1.1
+Pool1:
+	ip=>192.168.5.1
+	dns=>192.168.5.2
+	startIP=>192.168.5.11
+
+Pool2:
+	ip=>192.168.3.1
+	dns=>192.168.5.2
+	startIP=>192.168.3.11
+
+Pool3:
+	ip=>192.168.6.1
+	dns=>192.168.5.2
+	startIP=>192.168.6.11
+
+
+Router 2:
+	RIP 192.168.2.0
+	RIP 192.168.3.0
+	RIP 192.168.5.0
+
+Switch 2
+Vlan2:
+	=>vlan 2
+	=>name vlan2
+	=>exit
+
+Vlan3:
+	=>vlan 3
+	=>name vlan3
+	=>exit
+
+Router 3
+S1/0:Switch
+			IP=>192.168.3.2 255.255.255.0
+FE0/0:Server
+			Ip=>192.168.6.1 255.255.255.0
+
+Router VoceIP
+	ip dhcp pool abc
+	network 192.168.6.0 255.255.255.0
+	default-router 192.168.6.1
+	option 150 ip 192.168.6.1
+	exit
+
+	telephony-service
+	max-dn 3
+	max-ephone 2
+	ip source-address 192.168.6.1 port 2000
+
+	auto assign 1 to 3
+	exit
+
+	ephones-dn  1
+	number 1111
+
+	ephones-dn  2
+	number 2222
+
+	ephones-dn  3
+	number 3333
+
+Switch ==> VoIP
+	Interface range fa0/2 – fa0/4
+	switchport voice vlan 1
+
+
+Configuring RIP
+	Configure Terminal=>router rip
+						version 2
+						network ....
+
+Configuring EIGRP
+	Configure Terminal=>router eigrp 10
+						network ......
+
+Configuring OSPF
+	Configure Terminal=>router OSPF 1
+						network 1.0.0.0      0.255.255.255 area 0
+						network 192.168.1.1  0.0.0.255 area 0
+
+IP Helper ===> 
+			1. interface Fast Ethernet to Switch
+			2. Configure Terminal => ip helper-address DNS IP
+			3. Exit
